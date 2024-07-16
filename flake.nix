@@ -19,6 +19,17 @@
                     projectPath = ./.;
                     packages = with pkgs; [
                         # Native dependencies, e.g. imagemagick
+                        (nodePackages.tailwindcss.overrideAttrs
+                            (_: {
+                                plugins = [
+                                    nodePackages."@tailwindcss/aspect-ratio"
+                                    nodePackages."@tailwindcss/forms"
+                                    nodePackages."@tailwindcss/language-server"
+                                    nodePackages."@tailwindcss/line-clamp"
+                                    nodePackages."@tailwindcss/typography"
+                                ];
+                            })
+                        )
                     ];
                     haskellPackages = p: with p; [
                         # Haskell dependencies go here

@@ -8,8 +8,8 @@ import Web.Types
 import Web.Routes
 import Application.Helper.View
 
-defaultLayout :: Html -> Html
-defaultLayout inner = [hsx|
+defaultLayout :: UTCTime -> Html -> Html
+defaultLayout currentTime inner = [hsx|
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,15 +18,35 @@ defaultLayout inner = [hsx|
         {stylesheets}
         {scripts}
 
-        <title>{pageTitleOrDefault "App"}</title>
+        <title>{pageTitleOrDefault "Tango Blog"}</title>
     </head>
     <body>
         <div class="container mt-4">
             {renderFlashMessages}
             {inner}
         </div>
+
+        {footer currentTime}
     </body>
 </html>
+|]
+    where
+        loginOrRegisterLinks =
+            case currentUserOrNothing of
+                Just user ->
+                    [hsx|
+                        <a class="btn btn-light" href={PostsAction}>My Links</a>
+                        <a class="btn btn-light js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>
+                    |]
+                Nothing ->
+                    [hsx|
+                        <a class="btn btn-light" href={NewSessionAction}>Login</a>
+                        <a class="btn btn-light" href={NewUserAction}>Register</a>
+                    |]
+
+footer :: UTCTime -> Html
+footer currentTime = [hsx|
+    <footer>Copyright All Rights Reserved {formatTime defaultTimeLocale "%Y" currentTime}</footer>
 |]
 
 -- The 'assetPath' function used below appends a `?v=SOME_VERSION` to the static assets in production
@@ -66,9 +86,9 @@ metaTags :: Html
 metaTags = [hsx|
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <meta property="og:title" content="App"/>
+    <meta property="og:title" content="Tango Buch"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:url" content="TODO"/>
-    <meta property="og:description" content="TODO"/>
+    <meta property="og:url" content="website"/>
+    <meta property="og:description" content="Tango in alle Lebenslagen"/>
     {autoRefreshMeta}
 |]
